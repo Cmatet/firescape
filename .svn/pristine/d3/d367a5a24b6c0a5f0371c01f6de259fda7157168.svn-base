@@ -1,0 +1,41 @@
+ig.module( 
+	'game.entities.bulletxt'
+)
+.requires(
+   
+    'impact.entity'
+)
+
+.defines(function(){
+
+// Create your own entity, subclassed from ig.Enitity
+EntityFire = ig.Entity.extend({
+
+    
+    size: {x: 145, y: 145},
+    
+    // Load an animation sheet
+    animSheet: new ig.AnimationSheet( 'media/bulle.png', 145, 145 ),
+    
+    init: function( x, y, settings ) {
+        // Call the parent constructor
+        this.parent( x, y, settings );
+    },
+    
+    setImg: function (image){
+	animSheet = image
+	
+    },
+    
+    
+    update: function() {
+        if(ig.game.getEntityByName("Tom") != undefined ){
+	this.x = ig.game.getEntityByName("Tom").x;
+	this.y = ig.game.getEntityByName("Tom").y + 145;
+	}
+        // Call the parent update() method to move the entity
+        // according to its physics
+        this.parent(); 
+    },
+});
+});

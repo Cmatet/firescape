@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Impact Game</title>
+	<style type="text/css">
+		html,body {
+			background-color: #000;
+			color: #fff;
+			font-family: helvetica, arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			font-size: 12pt;
+		}
+		
+		#canvas {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			border: 1px solid #555;
+		}
+	</style>
+	<script type="text/javascript" src="lib/game/buzz.js"></script>
+	<script type="text/javascript" src="lib/game/audiolib.js"></script>
+	
+	<script type="text/javascript" src="lib/game/buzz.min.js"></script>
+	<script type="text/javascript" src="lib/impact/impact.js"></script>
+	<script type="text/javascript" src="lib/game/main.js"></script>
+	<script type="text/javascript" src="sons/musique1.js"></script>
+	<script type="text/javascript" src="sons/ambiance_musique.js"></script>
+	<script type="text/javascript" src="sons/ambiance_musique2.js"></script>
+	<script type="text/javascript" src="sons/ambiance_bong1.js"></script>
+	<script type="text/javascript" src="sons/ambiance_clap.js"></script>
+	<script type="text/javascript" src="sons/ambiance_violon.js"></script>
+	<script type="text/javascript" src="sons/ambiance_coeur.js"></script>
+	<script type="text/javascript" src="sons/ambiance_metal.js"></script>
+	<script type="text/javascript" src="sons/ambiance_tambour.js"></script>
+	<script type="text/javascript" src="sons/feumusique.js"></script>
+	
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+</body>
+</html>

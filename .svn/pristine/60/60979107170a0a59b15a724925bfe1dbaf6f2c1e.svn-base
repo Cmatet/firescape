@@ -1,0 +1,37 @@
+ig.module(
+	'game.entities.danger'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityDanger = ig.Entity.extend({
+            
+                name : "Danger",
+                animSheet: new ig.AnimationSheet('media/barre_de_danger.png',317,17),
+		size: {x: 317, y: 17},
+		
+	    init: function( x, y, settings ) {
+ 
+         
+            this.addAnim( 'idle', 1, [0] );
+            this.currentAnim = this.anims.idle;
+    },
+ 
+        update: function(){
+
+        // Used to follow the Unit its assigned to.
+        this.pos.x = ig.game.screen.x + 500;
+        this.pos.y = ig.game.screen.y + 10 ;
+     
+     
+    // console.trace("test");
+//	console.trace(ig.game.danger);
+     
+   //  this.offset.x = ( 100 - (ig.game.danger / 100) )* 317;
+    this.offset.x = 30.0;
+        }
+    
+ 
+});
+});

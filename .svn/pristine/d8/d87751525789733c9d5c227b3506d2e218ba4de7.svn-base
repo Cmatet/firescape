@@ -1,0 +1,55 @@
+ig.module(
+	'game.entities.health'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityHealth = ig.Entity.extend({
+            
+                name : "HealthBar",
+                animSheet: new ig.AnimationSheet('media/lifebar.png',320,16),
+		size: {x: 320, y: 16},
+                Unit : null,
+	    init: function( x, y, settings ) {
+ 
+            this.addAnim( '10', 1, [0] );
+            this.addAnim( '9', 1, [1] );
+            this.addAnim( '8', 1, [2] );
+            this.addAnim( '7', 1, [3] );
+            this.addAnim( '6', 1, [4] );
+            this.addAnim( '5', 1, [5] );
+            this.addAnim( '4', 1, [6] );
+            this.addAnim( '3', 1, [7] );
+            this.addAnim( '2', 1, [8] );
+            this.addAnim( '1', 1, [9] );
+            this.addAnim( '0', 1, [10] );
+            this.Unit = settings.Unit;
+            this.zIndex = 1;
+    },
+ 
+        update: function(){
+
+        // Used to follow the Unit its assigned to.
+        this.pos.x = ig.game.screen.x + 10;
+        this.pos.y = ig.game.screen.y + 10 ;
+        for (var i=10;i>-1;i--){
+            //Checks the Health Values
+            // maxHealth was created in the Entity and set to its initial health
+        
+            if(this.Unit.health == this.Unit.maxHealth){
+                this.currentAnim = this.anims[10];
+            }
+            // Unit below max not below 90%
+            else if(this.Unit.health > (this.Unit.maxHealth * (i*0.1)) // 80%
+                    && this.Unit.health <= this.Unit.maxHealth * ((i*0.1)+0.1)) // 90%
+            {
+                this.currentAnim = this.anims[i];
+            }else if (this.Unit.health <= 0 ){
+                this.kill();
+            }
+        }
+    }
+ 
+});
+});

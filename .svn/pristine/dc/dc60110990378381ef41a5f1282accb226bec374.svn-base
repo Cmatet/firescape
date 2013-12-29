@@ -1,0 +1,99 @@
+ig.module(
+        'game.entities.Particle'
+    ).requires(
+        'impact.entity'
+    ).defines(function(){
+
+        EntityParticle = ig.Entity.extend({
+            // single pixel sprites
+            size: { x:8, y:8 },
+
+            // particle will collide but not effect other entities
+            type: ig.Entity.TYPE.NONE,
+            checkAgainst: ig.Entity.TYPE.NONE,
+            collides: ig.Entity.COLLIDES.NEVER,
+
+            // default particle lifetime & fadetime
+            lifetime: 5,
+            fadetime: 1,
+            alpha: 255,
+
+            colours : {r:0,g:0,b:0},
+
+            // particles will bounce off other entities when it collides
+            minBounceVelocity: 0,
+            bounciness: 1.0,
+            friction: { x:0, y:0 },
+
+            init:function( x, y, settings ){
+                this.parent( x, y, settings );
+
+                // take velocity and add randomness to vel
+                var vx = this.vel.x;
+                var vy = this.vel.y;
+                this.vel.x = vx; //(Math.random()*2-1)*vx;
+                this.vel.y = (Math.random()*2-1)*vy;
+
+                // init timer for fadetime
+                this.idleTimer = new ig.Timer();
+            },
+
+            update: function() {
+                // check if particle has exsisted past lifetime
+                // if so, remove particle
+                if(this.idleTimer.delta() > this.lifetime){
+                    this.kill();
+                    return;
+                }
+
+                // fade the particle effect using the aplha blend
+                this.alpha = this.idleTimer.delta().map( this.lifetime - this.fadetime, this.lifetime, 1, 0 );
+
+                this.parent();
+            },
+
+            draw: function() {
+                var c = ig.system.context;
+                var s = ig.system.scale;
+                var x = this.pos.x * s - ig.game.screen.x * s;
+                var y = this.pos.y * s - ig.game.screen.y * s;
+                var imgdata = c.createImageData( 8, 8 );
+                for (var i=0;i<imgdata.data.length;i+=4)
+                {
+                    imgdata.data[i+0]=this.colours.r;
+                    imgdata.data[i+1]=this.colours.g;
+                    imgdata.data[i+2]=this.colours.b;
+                    imgdata.data[i+3]=255;
+                }
+                c.putImageData( imgdata, x, y);
+                c.restore();
+            }
+
+        });
+
+
+        GrenSparks = EntityParticle.extend({
+            // shorter lifetime
+            lifetime:2.0,
+            fadetime: 1,
+
+            // velocity value to be set
+            vel: {},
+            gravityFactor: 1,
+
+            // bounce a little less
+            bounciness: 0.1,
+
+            init:function( x, y, settings ){
+                
+                this.vel = { x: (Math.random() < 0.5 ? -1 : 1)*Math.random()*100,
+                    y: (Math.random() < 0.5 ? -1 : 1)*Math.random()*100 };
+
+
+                // send to parent
+                this.parent( x, y, settings );
+                this.colours = {r:0,g:(Math.random()*160) + 80 ,b:0};
+
+            }
+        });
+    });

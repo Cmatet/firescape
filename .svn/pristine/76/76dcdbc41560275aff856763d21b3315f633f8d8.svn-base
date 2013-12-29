@@ -1,0 +1,393 @@
+ig.module( 
+	'game.main'
+)
+.requires(
+	'impact.game',
+	'impact.font',
+	
+	'game.entities.health',
+	'game.entities.tom',
+	'game.levels.level1',
+	'game.levels.level1_1',
+	'game.entities.fire',
+	'game.levels.MenuChoix',
+	'game.Button',
+	'game.entities.Door',
+	'game.entities.DoorClosed',
+	'game.entities.flammable',
+	'game.entities.Alarm'
+	
+)
+.defines(function(){
+
+MyGame = ig.Game.extend({
+	
+	// Load a font
+	font: new ig.Font( 'media/font1.png' ),
+	
+	background1 : new ig.Image( 'media/ecranTitre.png' ),
+	background2: new ig.Image( 'media/fond_choixniveau.png'),
+	numlevel : 0,
+	tailleXglobal : 840,
+	tailleYglobal : 480,
+	choixniveau : 1,
+	danger : 10,
+	endroitCinematique: -1,
+	
+	init: function() {
+		var sound = new ig.Sound( 'media/musique1.ogg' );
+			sound.play();
+	
+		ig.input.bind(ig.KEY.SPACE,'action');
+		ig.input.bind(ig.KEY.LEFT_ARROW,'gauche');
+		ig.input.bind(ig.KEY.RIGHT_ARROW,'droite');
+		ig.input.bind(ig.KEY.UP_ARROW,'sauter');
+		ig.input.bind(ig.KEY.DOWN_ARROW,'bas');
+		ig.input.bind(ig.KEY.ENTER,'entrée');
+		ig.input.bind( ig.KEY.MOUSE1, 'click' );
+		
+		//this.loadLevel(LevelLevel1);
+		//this.gravity = 150;
+	},
+	
+	
+	
+	
+
+	
+	
+	lancerlevel: function(num) {
+		
+		switch(num)
+		{
+		case 1 :    this.numlevel = 1;
+			this.loadLevel(LevelMenuChoix);
+			this.endroitCinematique = 0;
+			
+			
+			
+
+		
+		}
+		
+		
+		},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	update: function() {
+		
+		
+		
+		// Update all entities and backgroundMaps
+		this.parent();
+		
+		
+			if (ig.input.pressed('entrée')) {
+				
+				
+					
+				
+				if (this.numlevel == 0) { // on est à l'écran titre
+					
+					this.numlevel = -1;
+					
+				this.loadLevel(LevelMenuChoix);
+				this.initMenu();
+					
+					
+				}
+				else
+				if (this.numlevel == 1 && this.endroitCinematique != -1) {
+					
+					if(this.endroitCinematique<2)this.endroitCinematique++;
+					else{	
+					this.endroitCinematique = -1;
+					this.loadLevel(LevelLevel1_1);
+					}
+				}
+			
+		
+						
+					
+			
+			
+			
+		
+			}
+		
+		if (this.getEntityByName("Tom") != undefined ) {
+			if (this.getEntityByName("HealthBar") == undefined) {
+			this.spawnEntity(EntityHealth, this.screen.x + ig.system.width - 126,this.screen.y + 10,{ Unit: this.getEntityByName("Tom") });
+			}
+			if (this.getEntityByName("Tom").pos.x < this.screen.x + ig.system.width * 0.25) {
+				this.screen.x = this.getEntityByName("Tom").pos.x - ig.system.width * 0.25;
+			}
+			if (this.getEntityByName("Tom").pos.x > this.screen.x + ig.system.width * 0.75) {
+				this.screen.x = this.getEntityByName("Tom").pos.x - ig.system.width * 0.75 ;
+			}
+			
+			if (this.getEntityByName("Tom").pos.y < this.screen.y + ig.system.height * 0.33) {
+				this.screen.y = this.getEntityByName("Tom").pos.y - ig.system.height * 0.33;
+			}
+			if (this.getEntityByName("Tom").pos.y > this.screen.y + ig.system.height * 0.66) {
+				this.screen.y = this.getEntityByName("Tom").pos.y - ig.system.height * 0.66 ;
+			}
+			
+		}
+		
+		
+		
+			
+		
+		// Add your own, additional update code here
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	initMenu: function() {
+		 
+		font1 = new ig.Font( 'media/font1.png' );
+		
+	
+			
+	
+	
+		ig.game.spawnEntity( Button, 100, 100, {
+		  font: font1,
+		  text: [ 'Niveau 1' ],
+		  textPos: { x: 55, y: 15 },
+		  size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(1);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+		
+		
+		
+			ig.game.spawnEntity( Button, 500, 100, {
+		 	  font: font1,
+		  text: [ 'Niveau 2' ],
+		  textPos: { x: 55, y: 15 },
+		 size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(2);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+			
+			
+			
+			
+				ig.game.spawnEntity( Button, 100, 350, {
+			  font: font1,
+		  text: [ 'Niveau 3' ],
+		  textPos: { x: 55, y: 15 },
+		  
+		size: { x: 775/3, y: 79 },
+		animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(3);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+				
+				
+				
+				
+					ig.game.spawnEntity( Button, 500, 350, {
+		    font: font1,
+			  font: font1,
+		  text: [ 'Niveau 4' ],
+		  textPos: { x: 55, y: 15 },
+		size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(4);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+		
+		
+		
+		
+		
+	
+		
+		
+		
+	},
+	
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	draw: function() {
+		
+		
+		
+		
+		switch (this.numlevel) {
+			case 0 :  this.parent(); this.background1.draw( 0, 0 ); break;
+			case -1 : this.background2.draw(0,0);
+			
+			
+			 for( var i = 0; i < this.entities.length; i++ ) {
+					this.entities[i].draw();
+				  }
+			
+			
+			
+			
+			
+			
+			break;
+			case 1 ://this.parent();
+			
+			
+  if( this.clearColor ) {
+        ig.system.clear( this.clearColor );
+    }
+    
+    this._rscreen.x = Math.round(this.screen.x * ig.system.scale)/ig.system.scale;
+    this._rscreen.y = Math.round(this.screen.y * ig.system.scale)/ig.system.scale;
+    
+    // Loop through all bg maps
+    for( var l = 0; l < this.backgroundMaps.length; l++ ) {
+        
+        // Loop through all entities. Check if their drawBeforeLayer
+        // property matches the current layer and Draw it
+        for( var e = 0; e < this.entities.length; e++ ) {
+            var ent = this.entities[e];
+            if( 
+                typeof(ent.drawBeforeLayer) != 'undefined' &&
+                ent.drawBeforeLayer == l
+            ) {
+                ent.draw();
+            }
+        }
+        
+        // Draw the background map
+        var map = this.backgroundMaps[mapIndex];
+        map.setScreenPos( this.screen.x, this.screen.y );
+        map.draw();
+    }
+    
+    // Draw all entities that don't have the drawBeforeLayer property
+    for( var e = 0; e < this.entities.length; e++ ) {
+        var ent = this.entities[e];
+        if( typeof(ent.drawBeforeLayer) == 'undefined' ) {
+            ent.draw();
+        }
+    }
+			
+						switch(this.endroitCinematique){
+							case -1 : break;
+			case 0 :
+				
+				
+				
+			var img = new ig.Image( 'media/cinematique1.png' );
+			img.draw( 0, 0 );
+			
+			this.font.draw( "Tom etait tranquilement en train de", 30, 30);
+				this.font.draw( "jouer dans son appartement.", 30, 60);
+				this.font.draw( "Ses parents sont partis faire des courses.", 30, 95);
+				
+			
+			
+			
+			break;
+			case 1 :var img = new ig.Image( 'media/cinematique2.png' );
+			img.draw( 0, 0 );
+			
+			this.font.draw( "Soudain, un incendie se declare !", 30,30);
+			
+			break;
+			case 2 :
+			var img = new ig.Image( 'media/cinematique3.png' );
+			img.draw( 0, 0 );
+			this.font.draw( "Tom doit s'echapper et prevenir les pompiers.", 30, 30); 
+						this.font.draw("Heureusement, il se souvient des conseils", 30, 60);
+						this.font.draw("de ses parents.", 30, 95);
+						
+						break;
+						
+						}
+						break;
+		
+		
+		}
+		
+		
+		
+		
+	}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Start the Game with 60fps, a resolution of 320x240, scaled
+// up by a factor of 2
+ig.main( '#canvas', MyGame, 60, 840, 480, 1 );
+
+});

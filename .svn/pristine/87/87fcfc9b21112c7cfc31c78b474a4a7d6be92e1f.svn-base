@@ -1,0 +1,33 @@
+ig.module(
+	'game.entities.zoneTextDebut'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityzoneTextDebut = ig.Entity.extend({
+            
+        name : "ZoneTextDebut",
+        Unit : EntityFire,
+	_wmDrawBox: true,
+	_wmScalable: true,
+	_wmBoxColor: 'rgba(255,255,0,0.5)',
+	available : true,
+		
+	init: function( x, y, settings )
+	{
+		//obligatoire
+		this.parent(x,y,settings);
+	},
+ 
+        update: function()
+	{
+		 if(ig.game.getEntityByName("Tom") != undefined && this.touches(ig.game.getEntityByName("Tom"))  && this.available ==true) {
+			ig.game.spawnEntity(bulletxt);
+			this.available = false;
+		 }
+				
+	}
+ 
+});
+});

@@ -1,0 +1,65 @@
+ig.module( 
+	'game.entities.Alarm'
+)
+.requires(
+   
+    'impact.entity'
+)
+
+.defines(function(){
+
+// Create your own entity, subclassed from ig.Enitity
+EntityAlarm = ig.Entity.extend({
+
+
+    
+    size: {x: 24, y: 48},
+    _wmBoxColor: 'rgba(0,0,255,0.5)',
+    checkAgainst : ig.Entity.TYPE.BOTH,
+    // Load an animation sheet
+    animSheet : new ig.AnimationSheet( 'media/alarme2.png', 74, 87),
+    zIndex : 1,
+    active: false,
+    
+    
+    init: function( x, y, settings ) {
+        // Add animations for the animation sheet        
+        // Call the parent constructor
+	
+        this.addAnim( 'etein', 0.1, [0]);
+	this.addAnim( 'allume', 0.1, [1]);
+	this.currentAnim = this.anims.etein;
+        this.parent( x, y, settings );
+	
+    },
+    
+    update: function() {
+        var Tom = ig.game.getEntitiesByType(EntityTom);
+
+    // Check that at least one door exists.
+    if (Tom) {
+        for (var i = 0; i < Tom.length; i++) {
+            // Check if the tile is located at the faced tile.
+            var distanceToAlarm = this.distanceTo(Tom[i]);
+            if (distanceToAlarm <= this.size.x * 2 &&  ig.input.pressed("action")&& this.active == false) {
+                ig.game.danger -= 5;
+		this.active = true;
+		//jouer un son
+		this.currentAnim = this.anims.allume;
+		ig.game.bruitages.alarme.volume = 1.0;
+		ig.game.bruitages.alarme.play();
+		ig.Sound.channels = 30;
+		for(var j = 0; j < 20; j++)
+		{
+		    ig.game.spawnEntity(GrenSparks,Tom[i].pos.x,Tom[i].pos.y - 15);
+		}
+		ig.game.bonnesAction.alarme++;
+		
+            }
+
+        }
+    }
+        this.parent(); 
+    },
+});
+});

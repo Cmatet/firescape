@@ -1,0 +1,470 @@
+ig.module( 
+	'game.main'
+)
+.requires(
+	'impact.game',
+	'impact.font',
+	
+	'game.entities.FallingFloor',
+	'game.entities.Exit',
+	'game.entities.Exit2',
+	'game.entities.health',
+	'game.entities.danger',
+	'game.entities.tom',
+	'game.levels.level1',
+	'game.levels.level1_1',
+	'game.levels.level2_1',
+	'game.entities.fire',
+	'game.levels.MenuChoix',
+	'game.Button',
+	'game.entities.Door',
+	'game.entities.DoorClosed',
+	'game.entities.flammable',
+	'game.entities.Alarm',
+	'game.entities.bulletxt',
+	'game.entities.zoneTextDebut',
+	'game.entities.zoneTextFin',
+	'game.entities.Ascenseur',
+	'game.entities.PanneauAscenseur',
+	'game.entities.PanneauEscalier',
+	'game.entities.Extincteur',
+	'game.entities.Escalier',
+	'game.entities.fumee',
+	'game.entities.fumable',
+	'game.entities.Mousse',
+	'game.entities.Particle',
+	'game.entities.Trigger_danger_start'
+	
+	
+)
+.defines(function(){
+
+MyGame = ig.Game.extend({
+	
+	// Load a font
+	font: new ig.Font( 'media/font1.png' ),
+	dangeractif : false,
+	background1 : new ig.Image( 'media/ecranTitre.png' ),
+	background2: new ig.Image( 'media/fond_choixniveau.png'),
+	numlevel : 0,
+	tailleXglobal : 840,
+	tailleYglobal : 480,
+	choixniveau : 1,
+	danger : 10,
+	endroitCinematique: -1,
+	dev : null,
+	distorsion : null,
+	sampler : null,
+	osc : null,
+	Mustring : null,
+	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+	tempo : 120,
+	notesPerBeat : 4,
+	tickCounter : 1,
+	tick : 0,
+	state : {},
+	fps : 60,
+	bruitages : {},
+	samplers : [],
+	tempsSon : [],
+	bonnesAction : {},
+	mauvaiseAction : {},
+	audioCallback : function(buffer, channelCount){		
+		sampler.append(buffer, channelCount);
+		//delay.append(buffer);
+		//distorsion.append(buffer);
+	},	
+	
+	gameOver: function(i)
+	{
+	    this.state.gameover = i;
+	},
+	
+	
+	
+	
+	init: function() {
+		var mySample = atob(feumusique);
+		dev = audioLib.AudioDevice(this.audioCallback /* callback for the buffer fills */, 2 /* channelCount */);
+		//delay = audioLib.Delay.createBufferBased(2 /* channelCount */, dev.sampleRate, 400 /* delay time (in ms) */);
+		//distorsion = audioLib.Compressor.createBufferBased(2,dev.sampleRate,3);
+		// Create an instance  of the Sampler class
+		sampler = audioLib.Sampler(dev.sampleRate);
+		// Load the sample to the sampler
+		sampler.loadWav(mySample, true);
+		this.samplers[0] = sampler;
+		this.tempsSon[0] = 1;
+		//sampler.noteOn(440);
+		ig.input.bind(ig.KEY.SPACE,'action');
+		ig.input.bind(ig.KEY.LEFT_ARROW,'gauche');
+		ig.input.bind(ig.KEY.RIGHT_ARROW,'droite');
+		ig.input.bind(ig.KEY.UP_ARROW,'sauter');
+		ig.input.bind(ig.KEY.DOWN_ARROW,'bas');
+		ig.input.bind(ig.KEY.ENTER,'entrée');
+		ig.input.bind( ig.KEY.MOUSE1, 'click' );
+		ig.input.bind( ig.KEY.C, 'mousse' );
+		this.state.gameover = 0;
+		this.chargerActions();
+		this.chargerBruitages();
+	},
+	
+	//ici on chargera les bruitages
+	
+	chargerBruitages : function()
+	{
+		this.bruitages.alarme = new ig.Sound('media/alarme1.ogg');
+		this.bruitages.ecroulement = new ig.Sound('media/ecroulement.ogg');
+		this.bruitages.extincteur = new ig.Sound('media/exctincteur.ogg');
+	},
+	
+	
+	chargerActions : function()
+	{
+		this.bonnesAction.porte = 0;
+		this.bonnesAction.alarme = 0;
+		this.mauvaiseAction.chemin = 0;
+	},
+	
+	
+	lancerlevel: function(num) {
+		
+		switch(num)
+		{
+		case 1 :    this.numlevel = 1;
+			this.loadLevel(LevelMenuChoix);
+			this.endroitCinematique = 0;
+			
+			
+			
+			
+		
+		
+		}
+		
+		
+		},
+	
+	
+	
+	update: function() {
+		for(var i = 0; i < this.samplers.length;i++)
+		{
+			this.tempsSon[i] += this.samplers[i].pitch / this.samplers[i].sampleRate/this.notesPerBeat;
+			if (this.tempsSon[i] >= 1) {
+				this.samplers[i].noteOn(440,0.1);
+				this.tempsSon[i] = 0;
+			}
+		}
+		
+		if (this.state.gameover) {
+			this.danger = 30;
+			
+			if (ig.input.pressed('action'))
+			{
+				this.state.gameover = false;
+				this.loadLevel(LevelLevel1_1);
+			}
+		}
+		else
+		{
+			if (this.danger < 100 && this.dangeractif==true) {
+				this.danger += 0.02;
+			}
+			// Update all entities and backgroundMaps
+			this.parent();
+			
+			
+				if (ig.input.pressed('entrée') || ig.input.pressed('click')) {
+					
+					
+						
+					
+					if (this.numlevel == 0) { // on est à l'écran titre
+						
+						this.numlevel = -1;
+						
+					this.loadLevel(LevelMenuChoix);
+					this.initMenu();
+						
+						
+					}
+					else
+					if (this.numlevel == 1 && this.endroitCinematique != -1) {
+						
+						if(this.endroitCinematique<2)this.endroitCinematique++;
+						else{	
+						this.endroitCinematique = -1;
+						this.loadLevel(LevelLevel1_1);
+						this.danger = 30;
+						}
+					}
+				
+			
+							
+						
+				
+				
+				
+			
+				}
+			
+			if (this.getEntityByName("Tom") != undefined ) {
+				if (this.getEntityByName("HealthBar") == undefined) {
+				this.spawnEntity(EntityHealth, this.screen.x + ig.system.width - 126,this.screen.y + 10,{ Unit: this.getEntityByName("Tom") });
+				}
+				if (this.getEntityByName("Danger") == undefined) {
+				this.spawnEntity(EntityDanger, this.screen.x + ig.system.width - 126,this.screen.y + 10,{ Unit: this});
+				}
+				
+				if (this.getEntityByName("Tom").pos.x < this.screen.x + ig.system.width * 0.25) {
+					this.screen.x = this.getEntityByName("Tom").pos.x - ig.system.width * 0.25;
+				}
+				if (this.getEntityByName("Tom").pos.x > this.screen.x + ig.system.width * 0.75) {
+					this.screen.x = this.getEntityByName("Tom").pos.x - ig.system.width * 0.75 ;
+				}
+				
+				if (this.getEntityByName("Tom").pos.y < this.screen.y + ig.system.height * 0.33) {
+					this.screen.y = this.getEntityByName("Tom").pos.y - ig.system.height * 0.33;
+				}
+				if (this.getEntityByName("Tom").pos.y > this.screen.y + ig.system.height * 0.66) {
+					this.screen.y = this.getEntityByName("Tom").pos.y - ig.system.height * 0.66 ;
+				}
+				
+			}
+		
+		}
+		
+			
+		
+		// Add your own, additional update code here
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	initMenu: function() {
+		 
+		font1 = new ig.Font( 'media/font1.png' );
+		
+	
+			
+	
+	
+		ig.game.spawnEntity( Button, 100, 100, {
+		  font: font1,
+		  text: [ 'Niveau 1' ],
+		  textPos: { x: 55, y: 15 },
+		  size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(1);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+		
+		
+		
+			ig.game.spawnEntity( Button, 500, 100, {
+		 	  font: font1,
+		  text: [ 'Niveau 2' ],
+		  textPos: { x: 55, y: 15 },
+		 size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(2);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+			
+			
+			
+			
+				ig.game.spawnEntity( Button, 100, 350, {
+			  font: font1,
+		  text: [ 'Niveau 3' ],
+		  textPos: { x: 55, y: 15 },
+		  
+		size: { x: 775/3, y: 79 },
+		animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(3);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+				
+				
+				
+				
+					ig.game.spawnEntity( Button, 500, 350, {
+		    font: font1,
+			  font: font1,
+		  text: [ 'Niveau 4' ],
+		  textPos: { x: 55, y: 15 },
+		size: { x: 775/3, y: 79 },
+		  animSheet: new ig.AnimationSheet( 'media/button.png', 775/3, 79 ),
+			
+		  pressedDown: function() {
+		   // console.log( 'pressedDown' );
+		  },
+		  pressed: function() {
+			 ig.game.lancerlevel(4);
+		  },
+		  pressedUp: function() {
+		//    console.log( 'pressedUp' );
+		  }
+		});
+		
+		
+		
+		
+		
+	
+		
+		
+		
+	},
+	
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	draw: function() {
+		
+		
+		
+		if (this.state.gameover != 0)
+		{
+			if (this.state.gameover == 1) {
+				var img = new ig.Image( 'media/game_over.png' );
+				img.draw( 0, 0 );			
+			}
+			if (this.state.gameover == 2) {
+				var img = new ig.Image( 'media/game_over_ascenseur.png' );
+				img.draw( 0, 0 );
+				
+			}
+			this.font = new ig.Font( 'media/font4.png' );
+			this.font.draw( "Tu est mort avec ta barre de danger a " + this.danger, 250, 30);
+			this.font = new ig.Font( 'media/font2.png' );
+			this.font.draw( "Tu as ferme " + this.bonnesAction.porte + " portes", 45, 380);
+			this.font.draw( "Tu as active " + this.bonnesAction.alarme + " alarmes", 45, 410);
+			this.font = new ig.Font( 'media/font3.png' );
+			this.font.draw( "Tu as pris " + this.mauvaiseAction.chemin + " mauvais chemin", 560, 380);
+			
+		}
+		else
+		{
+			
+			switch (this.numlevel) {
+				case 0 :  this.parent(); this.background1.draw( 0, 0 ); break;
+				case -1 : this.background2.draw(0,0);
+				
+				
+				 for( var i = 0; i < this.entities.length; i++ ) {
+						this.entities[i].draw();
+					  }
+				
+				
+				
+				
+				
+				
+				break;
+				case 1 :this.parent();
+				
+	   
+				
+							switch(this.endroitCinematique){
+								case -1 : break;
+				case 0 :
+					
+					
+					
+				var img = new ig.Image( 'media/cinematique1.png' );
+				img.draw( 0, 0 );
+				
+				this.font.draw( "Tom etait tranquilement en train de", 30, 30);
+					this.font.draw( "jouer dans son appartement.", 30, 60);
+					this.font.draw( "Ses parents sont partis faire des courses.", 30, 95);
+					
+				
+				
+				
+				break;
+				case 1 :var img = new ig.Image( 'media/cinematique2.png' );
+				img.draw( 0, 0 );
+				
+				this.font.draw( "Soudain, un incendie se declare !", 30,30);
+				
+				break;
+				case 2 :
+				var img = new ig.Image( 'media/cinematique3.png' );
+				img.draw( 0, 0 );
+				this.font.draw( "Tom doit s'echapper et prevenir les pompiers.", 30, 30); 
+							this.font.draw("Heureusement, il se souvient des conseils", 30, 60);
+							this.font.draw("de ses parents.", 30, 95);
+							
+							break;
+							
+							}
+							break;
+			
+			
+			}
+		}
+		
+		
+		
+	}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Start the Game with 60fps, a resolution of 320x240, scaled
+// up by a factor of 2
+ig.main( '#canvas', MyGame, 60, 840, 480, 1 );
+
+});

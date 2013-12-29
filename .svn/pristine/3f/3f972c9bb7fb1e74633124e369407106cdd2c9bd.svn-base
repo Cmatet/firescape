@@ -1,0 +1,76 @@
+ig.module( 
+	'game.entities.Extincteur'
+)
+.requires(
+   
+    'impact.entity',
+    'game.entities.Mousse'
+)
+
+.defines(function(){
+
+// Create your own entity, subclassed from ig.Enitity
+EntityExtincteur = ig.Entity.extend({
+
+
+    
+    size: {x: 18, y: 35},
+    _wmDrawBox: true,
+    _wmBoxColor: 'rgba(0,0,255,0.5)',
+    checkAgainst : ig.Entity.TYPE.BOTH,
+    // Load an animation sheet
+    animSheet : new ig.AnimationSheet( 'media/extincteur.png',18 , 35),
+    zIndex : 15,
+    active: false,
+    
+    
+    init: function( x, y, settings ) {
+        // Add animations for the animation sheet        
+        // Call the parent constructor
+	this.animSheet =  new ig.AnimationSheet( 'media/extincteur.png',18 , 35);
+        this.addAnim( 'porte', 0.1, [0]);
+	this.currentAnim = this.anims.porte;
+        this.animSheet =  new ig.AnimationSheet( 'media/extincteur_gauche.png',18 , 35);
+        this.addAnim( 'porteGauche', 0.1, [0]);
+        this.parent( x, y, settings );
+	
+    },
+    
+    update: function() {
+        var Tom = ig.game.getEntitiesByType(EntityTom);
+
+    // Check that at least one door exists.
+    if (Tom) {
+        for (var i = 0; i < Tom.length; i++) {
+            // Check if the tile is located at the faced tile.
+            var distanceToAlarm = this.distanceTo(Tom[i]);
+            if (this.active)
+            {
+                if (Tom[i].direction == "droite") {
+                    this.currentAnim = this.anims.porte;
+                    this.pos.x = Tom[i].pos.x + 30;
+                    if (ig.input.state('mousse')) {
+                        ig.game.spawnEntity(EntityMousse, Tom[i].pos.x + 35,Tom[i].pos.y,{direction : Tom[i].direction});
+                    }
+                }
+                else
+                {
+                    this.currentAnim = this.anims.porteGauche;
+                   this.pos.x = Tom[i].pos.x - 10;
+                   if (ig.input.state('mousse')) {
+                        ig.game.spawnEntity(EntityMousse, Tom[i].pos.x - 15,Tom[i].pos.y,{direction : Tom[i].direction});
+                    }
+                }
+                
+                this.pos.y = Tom[i].pos.y + 8;
+                
+            }
+            if (distanceToAlarm <= this.size.x * 2 &&  ig.input.pressed("action")&& this.active == false) {
+		this.active = true;
+            }
+        }
+    }
+        this.parent(); 
+    },
+});
+});

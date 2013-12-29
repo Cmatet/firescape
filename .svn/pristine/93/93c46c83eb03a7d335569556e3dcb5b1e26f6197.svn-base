@@ -1,0 +1,46 @@
+ig.module(
+	'game.entities.zoneTextDebut'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityZoneTextDebut = ig.Entity.extend({
+            
+        name : "ZoneTextDebut",
+        Unit : EntityFire,
+	_wmDrawBox: true,
+	_wmScalable: true,
+	_wmBoxColor: 'rgba(255,255,0,0.5)',
+	type : 0,
+		
+	init: function( x, y, settings )
+	{
+		//obligatoire
+		this.parent(x,y,settings);
+	},
+ 
+        update: function()
+	{
+		 if(ig.game.getEntityByName("Tom") != undefined && this.touches(ig.game.getEntityByName("Tom"))  && ig.game.getEntityByName("bulleTxt") == undefined) {
+			ig.game.spawnEntity(EntityBulletxt);
+			
+			
+			switch(type){
+				case 0: // deplacement
+				
+				break;
+				case 1 : //porte
+					console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle.png', 145, 145 ));	
+				break;
+				
+				
+			}
+			
+		 }
+				
+	}
+ 
+});
+});

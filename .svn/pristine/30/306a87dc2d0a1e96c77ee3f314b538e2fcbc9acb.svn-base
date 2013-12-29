@@ -1,0 +1,116 @@
+ig.module(
+	'game.entities.zoneTextDebut'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityZoneTextDebut = ig.Entity.extend({
+            
+        name : "ZoneTextDebut",
+        //Unit : EntityFire,
+	_wmDrawBox: true,
+	_wmScalable: true,
+	_wmBoxColor: 'rgba(255,255,0,0.5)',
+	type : 0,
+		
+	init: function( x, y, settings )
+	{
+		//obligatoire
+		this.parent(x,y,settings);
+	},
+ 
+        update: function()
+	{
+		 if(ig.game.getEntityByName("Tom") != undefined && this.touches(ig.game.getEntityByName("Tom"))  && ig.game.getEntityByName("bulleTxt") == undefined) {
+			ig.game.spawnEntity(EntityBulletxt,
+					    ig.game.getEntityByName("Tom").pos.x ,
+					    ig.game.getEntityByName("Tom").pos.y -145);
+			
+			
+			switch(this.type){
+				case 1: 
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_deplacement.png', 145, 145 ));	
+				
+				break;
+			case 2 : 
+			
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_saut.png', 145, 145 ));	
+				break;
+			case 3 :
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_ouvre_porte.png', 145, 145 ));	
+				break;
+			case 4 : 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_fermer_porte.png', 145, 145 ));	
+				break;
+			case 5 : 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_flammes.png', 145, 145 ));	
+				break;
+			case 6 : 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_vie.png', 145, 145 ));	
+				break;
+			case 7 : 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_danger.png', 145, 145 ));	
+				break;
+			case 8 : 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_accroupi.png', 145, 145 ));	
+				break;
+			case 9: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_fumee.png', 145, 145 ));	
+				break;
+			case 10: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_sortie.png', 145, 145 ));	
+				break;
+			case 11: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_serviette_flamme.png', 145, 145 ));	
+				break;
+			case 12: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_serviette_porte.png', 145, 145 ));	
+				break;
+			case 13: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_mouiller_visage.png', 145, 145 ));	
+				break;
+			case 14: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_extincteur.png', 145, 145 ));	
+				break;
+			case 15: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_eteindre_flammes.png', 145, 145 ));	
+				break;
+			case 16: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_escalier.png', 145, 145 ));	
+				break;
+			case 17: 
+					
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_alarme.png', 145, 145 ));	
+				break;
+			case 18: 
+					
+			ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_fumee.png', 145, 145 ));	
+			break;
+			case 19: 
+					
+			ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_mouiller_visager.png', 145, 145 ));	
+			break;
+				
+			}
+			
+		 }
+				
+	}
+ 
+});
+});

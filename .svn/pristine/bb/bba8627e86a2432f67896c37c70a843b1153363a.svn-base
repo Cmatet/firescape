@@ -1,0 +1,75 @@
+ig.module(
+	'game.entities.zoneTextDebut'
+)
+.requires(
+	'impact.entity'
+)
+.defines(function(){
+	EntityZoneTextDebut = ig.Entity.extend({
+            
+        name : "ZoneTextDebut",
+        Unit : EntityBulletxt,
+	_wmDrawBox: true,
+	_wmScalable: true,
+	_wmBoxColor: 'rgba(255,255,0,0.5)',
+	type : 0,
+		
+	init: function( x, y, settings )
+	{
+		//obligatoire
+		this.parent(x,y,settings);
+	},
+ 
+        update: function()
+	{
+		 if(ig.game.getEntityByName("Tom") != undefined && this.touches(ig.game.getEntityByName("Tom"))  && ig.game.getEntityByName("bulleTxt") == undefined) {
+			ig.game.spawnEntity(EntityBulletxt,
+					    ig.game.getEntityByName("Tom").pos.x ,
+					    ig.game.getEntityByName("Tom").pos.y -145);
+			
+			
+			switch(this.type){
+				case 0: 
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_deplacement.png', 145, 145 ));	
+				break;
+				case 1 : 
+			
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_saut.png', 145, 145 ));	
+				break;
+			case 2 :
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_ouvre_porte.png', 145, 145 ));	
+				break;
+			case 3 : 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_fermer_porte.png', 145, 145 ));	
+				break;
+			case 4 : 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_flammes.png', 145, 145 ));	
+				break;
+			case 5 : 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_vie.png', 145, 145 ));	
+				break;
+			case 6 : 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_danger.png', 145, 145 ));	
+				break;
+			case 7 : 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_accroupi.png', 145, 145 ));	
+				break;
+			case 8: 
+					//console.log("lolol");
+				ig.game.getEntityByName("bulleTxt").setImg( new ig.AnimationSheet( 'media/bulle_fumee.png', 145, 145 ));	
+				break;
+				
+			}
+			
+		 }
+				
+	}
+ 
+});
+});
